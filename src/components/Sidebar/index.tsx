@@ -21,10 +21,10 @@ export function Sidebar() {
             <DrawerOverlay>
                <DrawerContent bg="gray.800" p={4}>
                   <DrawerCloseButton mt="6" />
-                  <DrawerHeader>Navegação</DrawerHeader>
-                  <DrawerBody>
-                     <SidebarNav />
-                  </DrawerBody>
+                     <DrawerHeader>Navegação</DrawerHeader>
+                     <DrawerBody>
+                        <SidebarNav />
+                     </DrawerBody>
                </DrawerContent>
             </DrawerOverlay>
          </Drawer>

@@ -1,41 +1,21 @@
 import { Box, Button, Checkbox, Flex, Heading, Icon, Spinner, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue } from "@chakra-ui/react";
 import Link from "next/link";
-import { useEffect } from "react";
 import { RiAddLine } from "react-icons/ri";
-import { useQuery } from 'react-query'
+import { IoMdRefresh } from "react-icons/io";
 
 import { Header } from "../../components/Header";
 import { Pagination } from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
+import { useUsers } from "../../services/hooks/useUsers";
 
 export default function UserList() {
-    const { data, isLoading, error } =  useQuery("users", async () => {
-        const response = await fetch("http://localhost:3000/api/users")
-        const data = await response.json()
-            
-        const users = data.users.map(user => {
-            return {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                created_at: new Date(user.created_at).toLocaleDateString('pt-BT', {
-                    day: '2-digit',
-                    month:'long',
-                    year: 'numeric'
-                })
-            }
-        })
-
-        return users
-    }, {
-        staleTime: 1000 * 5 // 5 seconds
-    })
+    const { data, isLoading, isFetching, error, refetch } =  useUsers()
 
     const isWideVersion = useBreakpointValue({
         base: false,
         lg: true
-     })
-
+    })
+     
     return(
         <Box>
             <Header />
@@ -45,19 +25,37 @@ export default function UserList() {
 
                 <Box flex="1" borderRadius={8} bg="gray.800" p="8">
                     <Flex mb="8" justify="space-between" alignItems="center">
-                        <Heading size="lg" fontWeight="normal" >Usuário</Heading>
+                        <Heading size="lg" fontWeight="normal" >
+                            Usuário
 
-                       <Link href="/users/create" passHref>
-                        <Button
-                             as="a"
-                             size="sm"
-                             fontSize="sm"
-                             colorScheme="pink"
-                             leftIcon={<Icon as={RiAddLine} fontSize="20" />}
-                         >
-                             Criar novo
-                         </Button>
-                       </Link>
+                            { !isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" /> }
+                        </Heading>
+
+                        <span>
+                            <Button
+                                as="a"
+                                size="sm"
+                                fontSize="sm"
+                                mr="4"
+                                colorScheme="purple"
+                                leftIcon={<Icon as={IoMdRefresh} fontSize="20" />}
+                                onClick={() => refetch()}
+                            >
+                                Recarregar
+                            </Button>
+                            <Link href="/users/create" passHref>
+                                <Button
+                                    as="a"
+                                    size="sm"
+                                    fontSize="sm"
+                                    colorScheme="pink"
+                                    leftIcon={<Icon as={RiAddLine} fontSize="20" />}
+                                >
+                                    Criar novo
+                                </Button>
+                            </Link>
+                        </span>
+                       
                     </Flex>
 
                     { isLoading ? (

@@ -16,14 +16,14 @@ export function makeServer() {
         },
 
         // Allows to save/get datas from 2 tables at once.
-        // serializers: {  
-        //     application: ActiveModelSerializer
-        // },
+        serializers: {  
+            application: ActiveModelSerializer
+        },
 
         // Random data generation
         factories: {  
             user: Factory.extend({
-                name(i: number) {
+                name(/*i: number*/) {
                     return faker.name.firstName() +' '+ faker.name.lastName()
                     //return `Usuário ${i + 1}`
                 },
@@ -36,9 +36,9 @@ export function makeServer() {
             })
         },
 
-        // Includin massive datas (10 users)
+        // Includin massive datas (200 users)
         seeds(server) {  
-            server.createList('user', 10)
+            server.createList('user', 200)
         },
 
         routes() {
@@ -46,28 +46,28 @@ export function makeServer() {
             this.timing = 750     // API call delay, for testing
             
             this.post('/users')   // route POST api/users              
-            this.get('/users')  // route GET api/users
+            // this.get('/users')  // route GET api/users
 
             // GET with pagination of 10 in 10
-            // this.get('/users', function (schema, request) {
-            //     const { page = 1, per_page = 10} = request.queryParams
-            //     const totalUsers = schema.all('user').length //returns 200
-            //     const pageStart = (Number(page) - 1) * Number(per_page)
-            //     const pageEnd = pageStart + Number(per_page)
-                
-            //     const users = this.serialize(schema.all('user'))
-            //         .users
-            //         //.sort((a, b) => b.name < a.name) não funciona
-            //         .slice(pageStart, pageEnd)
+            this.get('/users', function (schema, request) {
+                const { page = 1, per_page = 10} = request.queryParams
 
-            //     return new Response(
-            //         200, // status code
-            //         { 'x-total-count': String(totalUsers) }, //header
-            //         { users }
-            //     )
-            // })
+                const totalUsers = schema.all('user').length //returns 200
+
+                const pageStart = (Number(page) - 1) * Number(per_page)
+                const pageEnd = pageStart + Number(per_page)
+                
+                const users = this.serialize(schema.all('user'))
+                    .users.slice(pageStart, pageEnd)
+
+                return new Response(
+                    200, // status code
+                    { 'x-total-count': String(totalUsers) }, //header
+                    { users }
+                )
+            })
             
-            // this.get('/users/:id')
+            this.get('/users/:id')
             
             this.namespace = ''   // if namespace isn't "api",this is not needed.
             this.passthrough()    

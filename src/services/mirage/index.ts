@@ -25,7 +25,7 @@ export function makeServer() {
             user: Factory.extend({
                 name(/*i: number*/) {
                     return faker.name.firstName() +' '+ faker.name.lastName()
-                    //return `Usuário ${i + 1}`
+                    //return `User ${i + 1}`
                 },
                 email() {
                     return faker.internet.email().toLowerCase()
@@ -36,7 +36,7 @@ export function makeServer() {
             })
         },
 
-        // Includin massive datas (200 users)
+        // Including massive datas (200 users)
         seeds(server) {  
             server.createList('user', 200)
         },

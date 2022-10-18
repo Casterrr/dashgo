@@ -3,6 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup'
 import { Input } from "../components/Form/input"
+import Router from "next/router";
 
 type SignInFormData = {
   email: string
@@ -11,7 +12,7 @@ type SignInFormData = {
 
 const signInFormSchema = yup.object().shape({
   email: yup.string().required("E-mail obrigatório").email("E-mail inválido"),
-  password: yup.string().required("Senha obrigatória"),
+  password: yup.string().required("Senha obrigatória").min(4, "A senha deve ter no mínimo 4 caracteres"),
 })
 
 export default function SignIn() {
@@ -29,10 +30,10 @@ export default function SignIn() {
     // }
 
     await new Promise(resolve => setTimeout(resolve, 2000))
-
-
+    
     console.log(values);
-
+    
+    Router.push('/dashboard')
   }
   
   return (
